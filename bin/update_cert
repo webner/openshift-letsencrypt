@@ -10,15 +10,11 @@ if [ "$enabled" != "true" ]; then
     exit 0
 fi
 
-function escapeNewline() {
-    echo "$1" | sed ':a;N;$!ba;s/\n/\\n/g'
-}
-
 function readFile() {
-    escapeNewline "$(cat $1)"
+    sed ':a;N;$!ba;s/\n/\\n/g' $1
 }
 
-"$acmedir/acme.sh" --home "$acmedir" --issue --staging --dns $ACME_DNS -d "$host"
+"$acmedir/acme.sh" --home "$acmedir" --config-home $HOME/acme-config --issue --staging --dns $ACME_DNS -d "$host"
 
 if [ $? -eq 0 ]; then
     dir="$acmedir/$host"
