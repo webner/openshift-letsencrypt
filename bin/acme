@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [ ! -e "$HOME/.acme.sh" ]; then
+    cd $HOME/acme.sh
+
+    ./acme.sh \
+        --install \
+        --nocron \
+        --config-home /home/letsencrypt/acme-config \
+        --accountemail "$ACCOUNT_EMAIL"
+fi
+
+while true; do
+    oc observe routes \
+        --all-namespaces \
+        --output=gotemplate \
+        -a '{{ .spec.host }}' \
+        -a '{{ with .metadata.annotations }}{{if index . "openshift.catalysts.cc/letsencrypt"}}true{{else}}false{{end}}{{else}}false{{end}}' \
+        --no-headers \
+        --exit-after=60s \
+        -- update_cert
+done

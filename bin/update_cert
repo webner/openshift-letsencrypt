@@ -1,0 +1,43 @@
+#!/bin/bash
+acmedir="$HOME/.acme.sh"
+
+namespace=$1
+name=$2
+host=$3
+enabled=$4
+
+if [ "$enabled" != "true" ]; then
+    exit 0
+fi
+
+function escapeNewline() {
+    echo "$1" | sed ':a;N;$!ba;s/\n/\\n/g'
+}
+
+function readFile() {
+    escapeNewline "$(cat $1)"
+}
+
+"$acmedir/acme.sh" --issue --staging --dns $ACME_DNS -d "$host"
+
+if [ $? -eq 0 ]; then
+    dir="$acmedir/$host"
+
+    certificate=$(readFile "$dir/$host.cer")
+    key=$(readFile "$dir/$host.key")
+    caCertificate=$(readFile "$dir/ca.cer")
+
+    read -r -d '' patch <<EOF
+    { 
+        "spec": { 
+            "tls": { 
+                "certificate": "$certificate", 
+                "key": "$key", 
+                "caCertificate": "$caCertificate" 
+            } 
+        } 
+    }
+EOF
+    
+    oc patch -n $namespace route/$name -p "$patch"
+fi
