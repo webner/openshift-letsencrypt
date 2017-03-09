@@ -20,4 +20,6 @@ ENV AWS_SECRET_ACCESS_KEY ""
 ENV ACCOUNT_NAME ""
 
 USER 1001
+ENV HOME /home/letsencrypt
+
 CMD ["acme"]
