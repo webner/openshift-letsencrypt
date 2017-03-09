@@ -1,5 +1,5 @@
 #!/bin/bash
-acmedir="$HOME/.acme.sh"
+acmedir="/home/letsencrypt/.acme.sh"
 
 namespace=$1
 name=$2
