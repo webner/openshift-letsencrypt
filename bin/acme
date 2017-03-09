@@ -17,6 +17,11 @@ while true; do
         -a '{{ .spec.host }}' \
         -a '{{ with .metadata.annotations }}{{if index . "openshift.catalysts.cc/letsencrypt"}}true{{else}}false{{end}}{{else}}false{{end}}' \
         --no-headers \
-        --exit-after=60s \
+        --exit-after=60m \
         -- update_cert
+
+    if [ $? -ne 0 ]; then
+        echo "WARN: oc observe failed, sleeping 60s"
+        sleep 60
+    fi
 done
