@@ -15,9 +15,10 @@ fi
 function readFile() {
     sed ':a;N;$!ba;s/\n/\\n/g' $1
 }
+
 echo "Updating $NAMESPACE/$NAME ($HOST)"
 
-"$ACME_HOME/acme.sh" --home "$ACME_HOME" --config-home "$ACME_CONFIG_HOME" --issue --staging --dns $ACME_DNS -d "$HOST"
+"$ACME_HOME/acme.sh" --home "$ACME_HOME" --config-home "$ACME_CONFIG_HOME" --issue --dns "$ACME_DNS" -d "$HOST"
 
 if [ $? -eq 0 ]; then
     DIR="$ACME_CONFIG_HOME/$HOST"
