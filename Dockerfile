@@ -11,6 +11,9 @@ COPY bin /home/letsencrypt/bin
 RUN chown -R 1001:0 /home/letsencrypt && chmod -R 770 /home/letsencrypt
 ENV PATH "$PATH:/home/letsencrypt/bin"
 
+#set this annotation to your route to true
+ENV ACME_ANNOTATION "openshift.catalysts.cc/letsencrypt"
+
 #AWS ROUTE 53 Secrets
 ENV ACME_DNS dns_aws
 ENV AWS_ACCESS_KEY_ID ""

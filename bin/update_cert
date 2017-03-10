@@ -1,12 +1,13 @@
-#!/bin/bash
-acmedir="$HOME/.acme.sh"
+#!/bin/bash -x
+ACME_HOME="$HOME/.acme.sh"
+ACME_CONFIG_HOME="$HOME/acme-config"
 
-namespace=$1
-name=$2
-host=$3
-enabled=$4
+NAMESPACE=$1
+NAME=$2
+HOST=$3
+ENABLED=$4
 
-if [ "$enabled" != "true" ]; then
+if [ "$ENABLED" != "true" ]; then
     exit 0
 fi
 
@@ -14,26 +15,26 @@ function readFile() {
     sed ':a;N;$!ba;s/\n/\\n/g' $1
 }
 
-"$acmedir/acme.sh" --home "$acmedir" --config-home $HOME/acme-config --issue --staging --dns $ACME_DNS -d "$host"
+"$ACME_HOME/acme.sh" --home "$ACME_HOME" --config-home "$ACME_CONFIG_HOME" --issue --staging --dns $ACME_DNS -d "$HOST"
 
 if [ $? -eq 0 ]; then
-    dir="$acmedir/$host"
+    DIR="$ACME_CONFIG_HOME/$HOST"
 
-    certificate=$(readFile "$dir/$host.cer")
-    key=$(readFile "$dir/$host.key")
-    caCertificate=$(readFile "$dir/ca.cer")
+    CERTIFICATE=$(readFile "$DIR/$HOST.cer")
+    KEY=$(readFile "$DIR/$HOST.key")
+    CA_CERTIFICATE=$(readFile "$DIR/ca.cer")
 
-    read -r -d '' patch <<EOF
+    read -r -d '' PATCH <<EOF
     { 
         "spec": { 
             "tls": { 
-                "certificate": "$certificate", 
-                "key": "$key", 
-                "caCertificate": "$caCertificate" 
+                "certificate": "$CERTIFICATE", 
+                "key": "$KEY", 
+                "caCertificate": "$CA_CERTIFICATE" 
             } 
         } 
     }
 EOF
     
-    oc patch -n $namespace route/$name -p "$patch"
+    oc patch -n $NAMESPACE route/$NAME -p "$PATCH"
 fi
