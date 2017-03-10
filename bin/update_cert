@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 ACME_HOME="$HOME/.acme.sh"
 ACME_CONFIG_HOME="$HOME/acme-config"
 
@@ -8,12 +8,14 @@ HOST=$3
 ENABLED=$4
 
 if [ "$ENABLED" != "true" ]; then
+    echo "Ignoring $NAMESPACE/$NAME ($HOST)"
     exit 0
 fi
 
 function readFile() {
     sed ':a;N;$!ba;s/\n/\\n/g' $1
 }
+echo "Updating $NAMESPACE/$NAME ($HOST)"
 
 "$ACME_HOME/acme.sh" --home "$ACME_HOME" --config-home "$ACME_CONFIG_HOME" --issue --staging --dns $ACME_DNS -d "$HOST"
 

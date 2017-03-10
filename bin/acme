@@ -10,6 +10,9 @@ if [ ! -e "$HOME/.acme.sh" ]; then
         --accountemail "$ACCOUNT_EMAIL"
 fi
 
+#creates $HOME/.kube/config and then the --namespace switch works as expected
+oc project default
+
 while true; do
     oc observe routes \
         --all-namespaces \
