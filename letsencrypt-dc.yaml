@@ -1,0 +1,39 @@
+kind: "DeploymentConfig"
+apiVersion: "v1"
+metadata:
+  name: "letsencrypt"
+spec:
+  template: 
+    metadata:
+      labels:
+        name: "letsencrypt"
+    spec:
+      containers:
+        - name: "letsencrypt"
+          image: "webner/openshift-letsencrypt"
+          volumeMounts:
+          - mountPath: /home/letsencrypt/acme-config
+            name: acme-config
+          env:
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: letsencrypt-aws
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: letsencrypt-aws
+                  key: AWS_SECRET_ACCESS_KEY
+      volumes:
+      - name: acme-config
+        persistentVolumeClaim:
+          claimName: letsencrypt-pvc
+      serviceAccountName: letsencrypt
+  replicas: 1
+  selector:
+    name: "letsencrypt"
+  triggers:
+    - type: "ConfigChange" 
+  strategy: 
+    type: "Recreate"

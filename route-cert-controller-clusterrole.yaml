@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ClusterRole
+metadata:
+  name: route-cert-controller
+rules:
+- apiGroups: null
+  attributeRestrictions: null
+  resources:
+    - routes
+  verbs:
+    - get
+    - list
+    - watch
+    - update
+    - create
+    - delete
+    - patch
+- apiGroups: null
+  attributeRestrictions: null
+  resources:
+    - endpoints
+    - projects
+  verbs:
+    - get
+    - list
+    - watch
