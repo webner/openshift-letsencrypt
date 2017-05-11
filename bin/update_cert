@@ -20,24 +20,22 @@ echo "Updating $NAMESPACE/$NAME ($HOST)"
 
 "$ACME_HOME/acme.sh" --home "$ACME_HOME" --config-home "$ACME_CONFIG_HOME" --issue --dns "$ACME_DNS" -d "$HOST"
 
-if [ $? -eq 0 ]; then
-    DIR="$ACME_CONFIG_HOME/$HOST"
+DIR="$ACME_CONFIG_HOME/$HOST"
 
-    CERTIFICATE=$(readFile "$DIR/$HOST.cer")
-    KEY=$(readFile "$DIR/$HOST.key")
-    CA_CERTIFICATE=$(readFile "$DIR/ca.cer")
+CERTIFICATE=$(readFile "$DIR/$HOST.cer")
+KEY=$(readFile "$DIR/$HOST.key")
+CA_CERTIFICATE=$(readFile "$DIR/ca.cer")
 
-    read -r -d '' PATCH <<EOF
-    { 
-        "spec": { 
-            "tls": { 
-                "certificate": "$CERTIFICATE", 
-                "key": "$KEY", 
-                "caCertificate": "$CA_CERTIFICATE" 
-            } 
+read -r -d '' PATCH <<EOF
+{ 
+    "spec": { 
+        "tls": { 
+            "certificate": "$CERTIFICATE", 
+            "key": "$KEY", 
+            "caCertificate": "$CA_CERTIFICATE" 
         } 
-    }
+    } 
+}
 EOF
-    
-    oc patch -n $NAMESPACE route/$NAME -p "$PATCH"
-fi
+
+oc patch -n $NAMESPACE route/$NAME -p "$PATCH"
