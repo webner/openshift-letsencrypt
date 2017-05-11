@@ -22,6 +22,9 @@ ENV AWS_SECRET_ACCESS_KEY ""
 # LETS ENCRYPT SETUP
 ENV ACCOUNT_NAME ""
 
+# Wait time after dns entry is created
+ENV Le_DNSSleep 30
+
 USER 1001
 ENV HOME /home/letsencrypt
 
