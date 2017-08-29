@@ -10,6 +10,9 @@ if [ ! -e "$HOME/.acme.sh" ]; then
         --accountemail "$ACCOUNT_EMAIL"
 fi
 
+#remove cached aws credentials
+sed -i '/AWS_*/d' $HOME/acme-config/account.conf
+
 #creates $HOME/.kube/config and then the --namespace switch works as expected
 oc project default
 
